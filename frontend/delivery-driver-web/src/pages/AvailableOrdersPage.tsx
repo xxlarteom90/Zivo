@@ -1,5 +1,6 @@
 import { Alert, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useTranslation } from '../features/i18n/useTranslation';
 import { acceptOrder, fetchAvailableOrders } from '../features/orders/orderThunks';
 import { selectAvailableOrders, selectOrderActionError, selectOrderActionLoading } from '../features/orders/orderSelectors';
 import { OrderCard } from '../features/orders/components/OrderCard';
@@ -18,6 +19,7 @@ export function AvailableOrdersPage() {
   const actionError = useAppSelector(selectOrderActionError);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
+  const { t } = useTranslation();
 
   const load = () => dispatch(fetchAvailableOrders({ search: debouncedSearch, pageSize: 20, sortBy: 'pickupWindowStartUtc', sortDirection: 'asc' }));
 
@@ -34,15 +36,15 @@ export function AvailableOrdersPage() {
 
   return (
     <Stack spacing={2}>
-      <PageHeader title="Available orders" subtitle="Accept jobs that are ready for pickup." />
+      <PageHeader title={t('order.list.available.title')} subtitle={t('order.list.available.subtitle')} />
       <OrderFilters search={search} onSearchChange={setSearch} />
       {actionError && <Alert severity="error">{actionError}</Alert>}
-      {available.loading && <LoadingState label="Loading available orders..." />}
+      {available.loading && <LoadingState label={t('order.list.available.loading')} />}
       {available.error && <ErrorState message={available.error} onRetry={load} />}
-      {!available.loading && !available.error && available.items.length === 0 && <EmptyState title="No available orders" description="New dispatcher-created orders will appear here." />}
+      {!available.loading && !available.error && available.items.length === 0 && <EmptyState title={t('order.list.available.emptyTitle')} description={t('order.list.available.emptyDesc')} />}
       <Stack spacing={2}>
         {available.items.map((order) => (
-          <OrderCard key={order.id} order={order} primaryActionLabel="Accept order" primaryActionLoading={actionLoading} onPrimaryAction={handleAccept} />
+          <OrderCard key={order.id} order={order} primaryActionLabel={t('order.accept')} primaryActionLoading={actionLoading} onPrimaryAction={handleAccept} />
         ))}
       </Stack>
     </Stack>

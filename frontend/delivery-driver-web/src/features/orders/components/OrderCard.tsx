@@ -5,6 +5,7 @@ import { Box, Button, Card, CardActionArea, CardContent, Divider, Stack, Typogra
 import { useNavigate } from 'react-router-dom';
 import type { OrderListItemDto } from '../../../entities/order';
 import { formatTimeWindow } from '../../../shared/utils/dateFormat';
+import { useTranslation } from '../../i18n/useTranslation';
 import { OrderStatusChip } from './OrderStatusChip';
 
 interface OrderCardProps {
@@ -16,6 +17,7 @@ interface OrderCardProps {
 
 export function OrderCard({ order, primaryActionLabel, primaryActionLoading, onPrimaryAction }: OrderCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <Card variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
@@ -45,14 +47,14 @@ export function OrderCard({ order, primaryActionLabel, primaryActionLoading, onP
               <Stack direction="row" spacing={1} alignItems="flex-start">
                 <LocationOnIcon fontSize="small" color="action" />
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>Pickup</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{t('order.pickup')}</Typography>
                   <Typography variant="body2" color="text.secondary">{order.pickupAddressSummary}</Typography>
                 </Box>
               </Stack>
               <Stack direction="row" spacing={1} alignItems="flex-start">
                 <LocationOnIcon fontSize="small" color="action" />
                 <Box>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>Delivery</Typography>
+                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{t('order.delivery')}</Typography>
                   <Typography variant="body2" color="text.secondary">{order.deliveryAddressSummary}</Typography>
                 </Box>
               </Stack>
@@ -61,7 +63,7 @@ export function OrderCard({ order, primaryActionLabel, primaryActionLoading, onP
             <Divider />
             <Stack direction="row" justifyContent="space-between" alignItems="center" gap={2}>
               <Typography variant="body2" color="text.secondary">
-                {order.itemSummary}{order.hasSpecialInstructions ? ' - special instructions' : ''}
+                {order.itemSummary}{order.hasSpecialInstructions ? ` ${t('order.specialInstructions')}` : ''}
               </Typography>
               <ArrowForwardIcon color="action" />
             </Stack>

@@ -12,6 +12,7 @@ import {
   selectSelectedOrderError,
   selectSelectedOrderLoading
 } from '../features/orders/orderSelectors';
+import { useTranslation } from '../features/i18n/useTranslation';
 import { MapButtons } from '../features/orders/components/MapButtons';
 import { OrderActionButtons } from '../features/orders/components/OrderActionButtons';
 import { OrderItemsList } from '../features/orders/components/OrderItemsList';
@@ -42,6 +43,7 @@ export function OrderDetailsPage() {
   const error = useAppSelector(selectSelectedOrderError);
   const actionLoading = useAppSelector(selectOrderActionLoading);
   const actionError = useAppSelector(selectOrderActionError);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (id) dispatch(fetchOrderDetails(id));
@@ -52,8 +54,8 @@ export function OrderDetailsPage() {
 
   const reload = () => id && dispatch(fetchOrderDetails(id));
 
-  if (!id) return <ErrorState message="Order id is missing." />;
-  if (loading) return <LoadingState label="Loading order details..." />;
+  if (!id) return <ErrorState message={t('order.idMissing')} />;
+  if (loading) return <LoadingState label={t('order.loadingDetails')} />;
   if (error) return <ErrorState message={error} onRetry={reload} />;
   if (!order) return null;
 
@@ -73,7 +75,7 @@ export function OrderDetailsPage() {
   return (
     <Stack spacing={2.5}>
       <Button startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} sx={{ alignSelf: 'flex-start' }}>
-        Back
+        {t('order.back')}
       </Button>
       <PageHeader
         title={order.publicOrderNumber}
@@ -83,44 +85,44 @@ export function OrderDetailsPage() {
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' }, gap: 2 }}>
         <Stack spacing={2}>
-          <SectionCard title="Pickup">
+          <SectionCard title={t('order.pickup')}>
             <Typography sx={{ fontWeight: 700 }}>{order.pickupAddress.summary}</Typography>
             <Typography color="text.secondary" sx={{ mb: 2 }}>{formatTimeWindow(order.pickupWindowStartUtc, order.pickupWindowEndUtc)}</Typography>
             <MapButtons address={order.pickupAddress} />
           </SectionCard>
 
-          <SectionCard title="Delivery">
+          <SectionCard title={t('order.delivery')}>
             <Typography sx={{ fontWeight: 700 }}>{order.deliveryAddress.summary}</Typography>
             <Typography color="text.secondary" sx={{ mb: 2 }}>{formatTimeWindow(order.deliveryWindowStartUtc, order.deliveryWindowEndUtc)}</Typography>
             <MapButtons address={order.deliveryAddress} />
           </SectionCard>
 
-          <SectionCard title="Items to handle">
+          <SectionCard title={t('order.items')}>
             <OrderItemsList items={order.items} />
           </SectionCard>
         </Stack>
 
         <Stack spacing={2}>
-          <SectionCard title="Customer">
+          <SectionCard title={t('order.customer')}>
             <Typography sx={{ fontWeight: 700 }}>{order.customer.fullName}</Typography>
             <Typography color="text.secondary">{order.customer.phoneNumber}</Typography>
             {order.customer.email && <Typography color="text.secondary">{order.customer.email}</Typography>}
           </SectionCard>
 
-          <SectionCard title="Partner business">
+          <SectionCard title={t('order.partner')}>
             <Typography sx={{ fontWeight: 700 }}>{order.partnerBusiness.name}</Typography>
             <Typography color="text.secondary">{order.partnerBusiness.businessType}</Typography>
             <Typography color="text.secondary">{order.partnerBusiness.phoneNumber}</Typography>
           </SectionCard>
 
           {(order.notes || order.specialInstructions) && (
-            <SectionCard title="Notes and instructions">
+            <SectionCard title={t('order.notesTitle')}>
               {order.specialInstructions && <Alert severity="warning" sx={{ mb: 1.5 }}>{order.specialInstructions}</Alert>}
               {order.notes && <Typography>{order.notes}</Typography>}
             </SectionCard>
           )}
 
-          <SectionCard title="Status history">
+          <SectionCard title={t('order.history')}>
             <Stack spacing={1.5} divider={<Divider flexItem />}>
               {order.statusHistory.map((history) => (
                 <Box key={history.id}>

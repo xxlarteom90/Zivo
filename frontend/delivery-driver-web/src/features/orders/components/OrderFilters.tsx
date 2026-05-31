@@ -1,5 +1,6 @@
 import SearchIcon from '@mui/icons-material/Search';
 import { InputAdornment, Paper, TextField } from '@mui/material';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface OrderFiltersProps {
   search: string;
@@ -7,7 +8,8 @@ interface OrderFiltersProps {
   placeholder?: string;
 }
 
-export function OrderFilters({ search, onSearchChange, placeholder = 'Search orders, customer, address...' }: OrderFiltersProps) {
+export function OrderFilters({ search, onSearchChange, placeholder }: OrderFiltersProps) {
+  const { t } = useTranslation();
   return (
     <Paper variant="outlined" sx={{ p: 1.5, mb: 2, borderRadius: 3 }}>
       <TextField
@@ -15,7 +17,7 @@ export function OrderFilters({ search, onSearchChange, placeholder = 'Search ord
         size="small"
         value={search}
         onChange={(event) => onSearchChange(event.target.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t('order.search')}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">

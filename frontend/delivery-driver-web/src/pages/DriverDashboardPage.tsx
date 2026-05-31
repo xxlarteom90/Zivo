@@ -4,6 +4,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { Box, Button, Card, CardContent, Stack, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useTranslation } from '../features/i18n/useTranslation';
 import { fetchActiveOrders, fetchAvailableOrders, fetchDeliveredOrders } from '../features/orders/orderThunks';
 import { selectActiveOrders, selectAvailableOrders, selectDeliveredOrders } from '../features/orders/orderSelectors';
 import { OrderCard } from '../features/orders/components/OrderCard';
@@ -34,6 +35,7 @@ export function DriverDashboardPage() {
   const available = useAppSelector(selectAvailableOrders);
   const active = useAppSelector(selectActiveOrders);
   const delivered = useAppSelector(selectDeliveredOrders);
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchAvailableOrders({ pageSize: 5 }));
@@ -43,23 +45,23 @@ export function DriverDashboardPage() {
 
   return (
     <Stack spacing={3}>
-      <PageHeader title="Driver dashboard" subtitle="See work that needs attention first." />
+      <PageHeader title={t('dashboard.title')} subtitle={t('dashboard.subtitle')} />
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 2 }}>
-        <MetricCard title="Available" value={available.totalCount} icon={<AssignmentIcon />} to="/orders/available" />
-        <MetricCard title="Active" value={active.totalCount} icon={<LocalShippingIcon />} to="/orders/active" />
-        <MetricCard title="Delivered" value={delivered.totalCount} icon={<CheckCircleIcon />} to="/orders/delivered" />
+        <MetricCard title={t('dashboard.metric.available')} value={available.totalCount} icon={<AssignmentIcon />} to="/orders/available" />
+        <MetricCard title={t('dashboard.metric.active')} value={active.totalCount} icon={<LocalShippingIcon />} to="/orders/active" />
+        <MetricCard title={t('dashboard.metric.delivered')} value={delivered.totalCount} icon={<CheckCircleIcon />} to="/orders/delivered" />
       </Box>
 
       <Card variant="outlined" sx={{ borderRadius: 3 }}>
         <CardContent>
           <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: 800 }}>My active orders</Typography>
-            <Button component={RouterLink} to="/orders/active">View all</Button>
+            <Typography variant="h6" sx={{ fontWeight: 800 }}>{t('dashboard.myActive')}</Typography>
+            <Button component={RouterLink} to="/orders/active">{t('dashboard.viewAll')}</Button>
           </Stack>
-          {active.loading && <LoadingState label="Loading active orders..." />}
+          {active.loading && <LoadingState label={t('order.list.active.loading')} />}
           {active.error && <ErrorState message={active.error} onRetry={() => dispatch(fetchActiveOrders({ pageSize: 5 }))} />}
-          {!active.loading && !active.error && active.items.length === 0 && <EmptyState title="No active orders" description="Accepted or picked-up orders will appear here." />}
+          {!active.loading && !active.error && active.items.length === 0 && <EmptyState title={t('order.list.active.emptyTitle')} description={t('order.list.active.emptyDesc')} />}
           <Stack spacing={2}>{active.items.map((order) => <OrderCard key={order.id} order={order} />)}</Stack>
         </CardContent>
       </Card>

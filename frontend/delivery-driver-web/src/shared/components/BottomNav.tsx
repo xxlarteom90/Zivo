@@ -1,20 +1,27 @@
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import HomeIcon from '@mui/icons-material/Home';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import MenuIcon from '@mui/icons-material/Menu';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-const items = [
-  { label: 'Home', path: '/', icon: <HomeIcon /> },
-  { label: 'Available', path: '/orders/available', icon: <AssignmentIcon /> },
-  { label: 'Active', path: '/orders/active', icon: <LocalShippingIcon /> },
-  { label: 'Done', path: '/orders/delivered', icon: <CheckCircleIcon /> }
-];
+import { useTranslation } from '../../features/i18n/useTranslation';
 
 export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const items = [
+    { label: t('nav.home'), path: '/', icon: <HomeIcon /> },
+    { label: t('nav.active'), path: '/orders/active', icon: <LocalShippingIcon /> },
+    { label: t('nav.finances'), path: '/finances', icon: <AccountBalanceWalletOutlinedIcon /> },
+    { label: t('nav.statistics'), path: '/statistics', icon: <ShowChartIcon /> },
+    { label: t('nav.profile'), path: '/profile', icon: <PersonOutlineIcon /> },
+    { label: t('nav.menu'), path: '/settings', icon: <MenuIcon /> }
+  ];
+
   const current = items.find((item) => item.path !== '/' && location.pathname.startsWith(item.path))?.path ?? '/';
 
   return (

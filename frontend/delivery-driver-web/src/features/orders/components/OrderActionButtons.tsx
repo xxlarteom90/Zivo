@@ -3,6 +3,7 @@ import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import { Alert, Button, Stack } from '@mui/material';
 import type { OrderAction } from '../../../entities/order';
+import { useTranslation } from '../../i18n/useTranslation';
 
 interface OrderActionButtonsProps {
   actions: OrderAction[];
@@ -14,6 +15,7 @@ interface OrderActionButtonsProps {
 }
 
 export function OrderActionButtons({ actions, loading, error, onAccept, onMarkPickedUp, onMarkDelivered }: OrderActionButtonsProps) {
+  const { t } = useTranslation();
   if (actions.length === 0 && !error) return null;
 
   return (
@@ -21,17 +23,17 @@ export function OrderActionButtons({ actions, loading, error, onAccept, onMarkPi
       {error && <Alert severity="error">{error}</Alert>}
       {actions.includes('Accept') && (
         <Button size="large" fullWidth variant="contained" startIcon={<PlaylistAddCheckIcon />} disabled={loading} onClick={onAccept}>
-          Accept order
+          {t('order.accept')}
         </Button>
       )}
       {actions.includes('MarkPickedUp') && (
         <Button size="large" fullWidth variant="contained" color="secondary" startIcon={<LocalShippingIcon />} disabled={loading} onClick={onMarkPickedUp}>
-          Mark picked up
+          {t('order.markPickedUp')}
         </Button>
       )}
       {actions.includes('MarkDelivered') && (
         <Button size="large" fullWidth variant="contained" color="success" startIcon={<CheckCircleIcon />} disabled={loading} onClick={onMarkDelivered}>
-          Mark delivered
+          {t('order.markDelivered')}
         </Button>
       )}
     </Stack>

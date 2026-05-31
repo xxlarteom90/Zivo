@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { login } from '../features/auth/authSlice';
 import { selectAuthError, selectAuthLoading, selectIsAuthenticated } from '../features/auth/authSelectors';
+import { useTranslation } from '../features/i18n/useTranslation';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 export function LoginPage() {
@@ -15,6 +16,7 @@ export function LoginPage() {
   const error = useAppSelector(selectAuthError);
   const [email, setEmail] = useState('driver1@example.com');
   const [password, setPassword] = useState('Password123!');
+  const { t } = useTranslation();
 
   const from = (location.state as { from?: { pathname: string } } | null)?.from?.pathname ?? '/';
 
@@ -38,21 +40,21 @@ export function LoginPage() {
             <LocalShippingIcon fontSize="large" />
           </Box>
           <Box textAlign="center">
-            <Typography variant="h4" sx={{ fontWeight: 900 }}>DeliveryApp</Typography>
-            <Typography color="text.secondary">Driver delivery management</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 900 }}>{t('login.appName')}</Typography>
+            <Typography color="text.secondary">{t('login.tagline')}</Typography>
           </Box>
         </Stack>
         <Card variant="outlined" sx={{ borderRadius: 4 }}>
           <CardContent sx={{ p: 3 }}>
             <Stack component="form" spacing={2.5} onSubmit={handleSubmit}>
               {error && <Alert severity="error">{error}</Alert>}
-              <TextField label="Email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
-              <TextField label="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" />
+              <TextField label={t('login.email')} type="email" value={email} onChange={(event) => setEmail(event.target.value)} required autoComplete="email" />
+              <TextField label={t('login.password')} type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" />
               <Button type="submit" variant="contained" size="large" disabled={loading}>
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? t('login.submitting') : t('login.submit')}
               </Button>
               <Typography variant="caption" color="text.secondary">
-                Demo driver: driver1@example.com / Password123!
+                {t('login.demoHint')}
               </Typography>
             </Stack>
           </CardContent>
