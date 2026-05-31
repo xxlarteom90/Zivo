@@ -90,6 +90,20 @@ public sealed class CreateOrderRequestDto
     public IReadOnlyCollection<CreateOrderItemDto> Items { get; set; } = Array.Empty<CreateOrderItemDto>();
 }
 
+public sealed class UpdateOrderRequestDto
+{
+    public Guid? PartnerBusinessId { get; set; }
+    public Guid? CustomerId { get; set; }
+    public CreateAddressDto? PickupAddress { get; set; }
+    public CreateAddressDto? DeliveryAddress { get; set; }
+    public DateTime? PickupWindowStartUtc { get; set; }
+    public DateTime? PickupWindowEndUtc { get; set; }
+    public DateTime? DeliveryWindowStartUtc { get; set; }
+    public DateTime? DeliveryWindowEndUtc { get; set; }
+    public string? Notes { get; set; }
+    public string? SpecialInstructions { get; set; }
+}
+
 public sealed class CancelOrderRequestDto
 {
     public string Reason { get; set; } = "Cancelled by dispatcher";

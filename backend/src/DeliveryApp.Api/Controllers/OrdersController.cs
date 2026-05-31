@@ -38,6 +38,13 @@ public sealed class OrdersController : ApiControllerBase
         return CreatedAtAction(nameof(GetById), new { id = result.Id }, ApiResponse<OrderDetailsDto>.Success(result, HttpContext.TraceIdentifier));
     }
 
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> Update(Guid id, UpdateOrderRequestDto request, CancellationToken cancellationToken)
+    {
+        var result = await _orderService.UpdateOrderAsync(id, request, cancellationToken);
+        return Envelope(result);
+    }
+
     [HttpPost("{id:guid}/cancel")]
     public async Task<ActionResult<ApiResponse<OrderDetailsDto>>> Cancel(Guid id, CancelOrderRequestDto request, CancellationToken cancellationToken)
     {

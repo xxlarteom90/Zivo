@@ -119,6 +119,59 @@ public sealed class OrderService : IOrderService
         return created.ToDetailsDto(GetAvailableActions(created));
     }
 
+    public async Task<OrderDetailsDto> UpdateOrderAsync(Guid orderId, UpdateOrderRequestDto request, CancellationToken cancellationToken = default)
+    {
+        var order = await LoadOrderAsync(orderId, asTracking: true, cancellationToken);
+
+        if (order.Status == OrderStatus.Delivered || order.Status == OrderStatus.Cancelled)
+        {
+            throw new ConflictAppException($"Order {order.PublicOrderNumber} cannot be modified in status {order.Status}.");
+        }
+
+        if (request.PartnerBusinessId.HasValue && request.PartnerBusinessId.Value != Guid.Empty && request.PartnerBusinessId.Value != order.PartnerBusinessId)
+        {
+            var partnerExists = await _dbContext.PartnerBusinesses
+                .AnyAsync(p => p.Id == request.PartnerBusinessId.Value && p.IsActive, cancellationToken);
+            if (!partnerExists) throw new NotFoundAppException("Partner business", request.PartnerBusinessId.Value);
+            order.PartnerBusinessId = request.PartnerBusinessId.Value;
+        }
+
+        if (request.CustomerId.HasValue && request.CustomerId.Value != Guid.Empty && request.CustomerId.Value != order.CustomerId)
+        {
+            var customerExists = await _dbContext.Customers.AnyAsync(c => c.Id == request.CustomerId.Value, cancellationToken);
+            if (!customerExists) throw new NotFoundAppException("Customer", request.CustomerId.Value);
+            order.CustomerId = request.CustomerId.Value;
+        }
+
+        if (request.PickupAddress is not null)
+        {
+            order.PickupAddress = CreateAddress(request.PickupAddress);
+        }
+
+        if (request.DeliveryAddress is not null)
+        {
+            order.DeliveryAddress = CreateAddress(request.DeliveryAddress);
+        }
+
+        if (request.PickupWindowStartUtc.HasValue) order.PickupWindowStartUtc = request.PickupWindowStartUtc;
+        if (request.PickupWindowEndUtc.HasValue) order.PickupWindowEndUtc = request.PickupWindowEndUtc;
+        if (request.DeliveryWindowStartUtc.HasValue) order.DeliveryWindowStartUtc = request.DeliveryWindowStartUtc;
+        if (request.DeliveryWindowEndUtc.HasValue) order.DeliveryWindowEndUtc = request.DeliveryWindowEndUtc;
+        if (request.Notes is not null) order.Notes = request.Notes.Trim();
+        if (request.SpecialInstructions is not null) order.SpecialInstructions = request.SpecialInstructions.Trim();
+
+        if (order.PickupWindowStartUtc.HasValue && order.PickupWindowEndUtc.HasValue && order.PickupWindowEndUtc <= order.PickupWindowStartUtc)
+            throw new ValidationAppException("Invalid pickup window.", ["PickupWindowEndUtc must be after PickupWindowStartUtc."]);
+        if (order.DeliveryWindowStartUtc.HasValue && order.DeliveryWindowEndUtc.HasValue && order.DeliveryWindowEndUtc <= order.DeliveryWindowStartUtc)
+            throw new ValidationAppException("Invalid delivery window.", ["DeliveryWindowEndUtc must be after DeliveryWindowStartUtc."]);
+
+        order.UpdatedAtUtc = _dateTimeProvider.UtcNow;
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+        var updated = await LoadOrderAsync(orderId, asTracking: false, cancellationToken);
+        return updated.ToDetailsDto(GetAvailableActions(updated));
+    }
+
     public async Task<OrderDetailsDto> CancelOrderAsync(Guid orderId, CancelOrderRequestDto request, CancellationToken cancellationToken = default)
     {
         var order = await LoadOrderAsync(orderId, asTracking: true, cancellationToken);

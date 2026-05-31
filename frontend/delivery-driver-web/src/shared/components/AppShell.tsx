@@ -1,9 +1,18 @@
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import HomeIcon from '@mui/icons-material/Home';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import MenuIcon from '@mui/icons-material/Menu';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ShowChartIcon from '@mui/icons-material/ShowChart';
 import {
   AppBar,
   Box,
@@ -23,17 +32,36 @@ import {
 import { useState } from 'react';
 import { Link as RouterLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '../../features/auth/authSlice';
-import { selectCurrentUser } from '../../features/auth/authSelectors';
+import { selectCurrentUser, selectIsDispatcher } from '../../features/auth/authSelectors';
+import { useTranslation } from '../../features/i18n/useTranslation';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { BottomNav } from './BottomNav';
 
 const drawerWidth = 280;
-const navItems = [
-  { label: 'Dashboard', path: '/', icon: <HomeIcon /> },
-  { label: 'Available orders', path: '/orders/available', icon: <AssignmentIcon /> },
-  { label: 'My active orders', path: '/orders/active', icon: <LocalShippingIcon /> },
-  { label: 'Delivered', path: '/orders/delivered', icon: <CheckCircleIcon /> }
-];
+
+function useNavItems() {
+  const { t } = useTranslation();
+  const isDispatcher = useAppSelector(selectIsDispatcher);
+  const items = [
+    { label: t('nav.dashboard'), path: '/', icon: <HomeIcon /> },
+    { label: t('nav.available'), path: '/orders/available', icon: <AssignmentIcon /> },
+    { label: t('nav.active'), path: '/orders/active', icon: <LocalShippingIcon /> },
+    { label: t('nav.delivered'), path: '/orders/delivered', icon: <CheckCircleIcon /> },
+    { label: t('nav.finances'), path: '/finances', icon: <AccountBalanceWalletOutlinedIcon /> },
+    { label: t('nav.statistics'), path: '/statistics', icon: <ShowChartIcon /> },
+    { label: t('nav.performance'), path: '/performance', icon: <ShowChartIcon /> },
+    { label: t('nav.referrals'), path: '/referrals', icon: <EmojiEventsOutlinedIcon /> },
+    { label: t('nav.messages'), path: '/messages', icon: <MailOutlineIcon /> },
+    { label: t('nav.support'), path: '/support', icon: <HelpOutlineIcon /> },
+    { label: t('nav.profile'), path: '/profile', icon: <PersonOutlineIcon /> },
+    { label: t('nav.settings'), path: '/settings', icon: <SettingsIcon /> },
+    { label: t('nav.about'), path: '/about', icon: <InfoOutlinedIcon /> }
+  ];
+  if (isDispatcher) {
+    items.splice(1, 0, { label: t('nav.manage'), path: '/orders/manage', icon: <ListAltIcon /> });
+  }
+  return items;
+}
 
 export function AppShell() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -42,6 +70,8 @@ export function AppShell() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const user = useAppSelector(selectCurrentUser);
+  const { t } = useTranslation();
+  const navItems = useNavItems();
 
   const handleLogout = () => {
     dispatch(logout());
@@ -79,7 +109,7 @@ export function AppShell() {
       </List>
       <Box sx={{ p: 2 }}>
         <Button fullWidth variant="outlined" startIcon={<LogoutIcon />} onClick={handleLogout}>
-          Logout
+          {t('settings.logout')}
         </Button>
       </Box>
     </Box>
@@ -99,7 +129,7 @@ export function AppShell() {
           </Typography>
           {isDesktop && (
             <Button color="inherit" startIcon={<LogoutIcon />} onClick={handleLogout}>
-              Logout
+              {t('settings.logout')}
             </Button>
           )}
         </Toolbar>

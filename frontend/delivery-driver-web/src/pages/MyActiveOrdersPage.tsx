@@ -1,5 +1,6 @@
 import { Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { useTranslation } from '../features/i18n/useTranslation';
 import { fetchActiveOrders } from '../features/orders/orderThunks';
 import { selectActiveOrders } from '../features/orders/orderSelectors';
 import { OrderCard } from '../features/orders/components/OrderCard';
@@ -16,6 +17,7 @@ export function MyActiveOrdersPage() {
   const active = useAppSelector(selectActiveOrders);
   const [search, setSearch] = useState('');
   const debouncedSearch = useDebouncedValue(search);
+  const { t } = useTranslation();
   const load = () => dispatch(fetchActiveOrders({ search: debouncedSearch, pageSize: 20 }));
 
   useEffect(() => {
@@ -24,11 +26,11 @@ export function MyActiveOrdersPage() {
 
   return (
     <Stack spacing={2}>
-      <PageHeader title="My active orders" subtitle="Continue accepted and picked-up jobs." />
+      <PageHeader title={t('order.list.active.title')} subtitle={t('order.list.active.subtitle')} />
       <OrderFilters search={search} onSearchChange={setSearch} />
-      {active.loading && <LoadingState label="Loading active orders..." />}
+      {active.loading && <LoadingState label={t('order.list.active.loading')} />}
       {active.error && <ErrorState message={active.error} onRetry={load} />}
-      {!active.loading && !active.error && active.items.length === 0 && <EmptyState title="No active orders" description="Accept an available order to start working." />}
+      {!active.loading && !active.error && active.items.length === 0 && <EmptyState title={t('order.list.active.emptyTitle')} description={t('order.list.active.emptyDesc')} />}
       <Stack spacing={2}>{active.items.map((order) => <OrderCard key={order.id} order={order} />)}</Stack>
     </Stack>
   );
