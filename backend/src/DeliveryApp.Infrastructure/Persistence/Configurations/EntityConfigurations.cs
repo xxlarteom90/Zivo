@@ -167,3 +167,18 @@ public sealed class OrderStatusHistoryConfiguration : IEntityTypeConfiguration<O
         builder.HasIndex(history => history.ChangedByUserId);
     }
 }
+
+public sealed class UserPreferencesConfiguration : IEntityTypeConfiguration<UserPreferences>
+{
+    public void Configure(EntityTypeBuilder<UserPreferences> builder)
+    {
+        builder.ToTable("user_preferences");
+        builder.HasKey(prefs => prefs.UserId);
+        builder.Property(prefs => prefs.Id).ValueGeneratedNever();
+        builder.Property(prefs => prefs.Language).HasMaxLength(16).IsRequired();
+        builder.Property(prefs => prefs.Appearance).HasMaxLength(16).IsRequired();
+        builder.Property(prefs => prefs.VehicleType).HasMaxLength(16).IsRequired();
+        builder.Property(prefs => prefs.NavigationApp).HasMaxLength(32).IsRequired();
+        builder.HasOne(prefs => prefs.User).WithOne().HasForeignKey<UserPreferences>(prefs => prefs.UserId).OnDelete(DeleteBehavior.Cascade);
+    }
+}
