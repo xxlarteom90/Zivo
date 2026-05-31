@@ -1,0 +1,17 @@
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface AuthenticatedUser {
+  id: string;
+  email: string;
+  fullName: string;
+  roles: string[];
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  expiresAtUtc: string;
+  user: AuthenticatedUser;
+}
