@@ -8,7 +8,7 @@ A production-style delivery management web application focused on drivers. It us
 - Database: PostgreSQL
 - Authentication: JWT Bearer Auth
 - API docs: Swagger
-- Local environment: Docker Compose for PostgreSQL
+- Local environment: PostgreSQL installed locally
 
 ## Project structure
 
@@ -33,7 +33,7 @@ A production-style delivery management web application focused on drivers. It us
 
 Install these locally:
 
-- Docker Desktop or Docker Engine
+- PostgreSQL
 - .NET 8 SDK
 - Node.js 20 or later
 - Visual Studio Code
@@ -50,14 +50,23 @@ From the repository root:
 
 ```bash
 cp .env.example .env
-docker compose up -d
+npm install
+npm run db:setup
+```
+
+`npm run db:setup` uses your local PostgreSQL installation. It asks for the password of the PostgreSQL admin user, usually `postgres`, then creates or updates:
+
+```text
+Database: delivery_app
+User: delivery_app
+Password: delivery_app_dev_password
 ```
 
 Run the backend:
 
 ```bash
-dotnet restore backend/DeliveryApp.sln
-dotnet run --project backend/src/DeliveryApp.Api/DeliveryApp.Api.csproj
+npm run backend:restore
+npm run backend:run
 ```
 
 In Development, the API is configured to automatically:
@@ -75,10 +84,8 @@ https://localhost:7044/swagger
 Run the frontend in another terminal:
 
 ```bash
-cd frontend/delivery-driver-web
-cp .env.example .env
-npm install
-npm run dev
+cp frontend/delivery-driver-web/.env.example frontend/delivery-driver-web/.env
+npm run frontend:dev
 ```
 
 Frontend URL:
@@ -230,15 +237,28 @@ If latitude/longitude exist, the links use coordinates. Otherwise, they use the 
 Run backend tests:
 
 ```bash
-dotnet test backend/DeliveryApp.sln
+npm run test
 ```
 
 Build frontend:
 
 ```bash
-cd frontend/delivery-driver-web
 npm run build
 ```
+
+## Local troubleshooting
+
+If `npm install` fails with `Could not read package.json`, make sure you are on the latest project files and run it from the repository root.
+
+If `psql` is not recognized in your terminal, that is fine: `npm run db:setup` searches common PostgreSQL install folders such as `C:\Program Files\PostgreSQL`.
+
+If the backend fails with `password authentication failed for user "delivery_app"`, run:
+
+```bash
+npm run db:setup
+```
+
+If you want to use a different local PostgreSQL user/database, update `ConnectionStrings__DefaultConnection` in `.env` or `backend/src/DeliveryApp.Api/appsettings.Development.json`.
 
 ## Production and Azure readiness notes
 

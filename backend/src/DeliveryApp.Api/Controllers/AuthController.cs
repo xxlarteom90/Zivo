@@ -28,6 +28,6 @@ public sealed class AuthController : ApiControllerBase
     [HttpPost("logout")]
     public ActionResult<ApiResponse<object>> Logout()
     {
-        return Envelope(new { message = "Token removed on client." });
+        return Envelope<object>(new { message = "Token removed on client." });
     }
 }

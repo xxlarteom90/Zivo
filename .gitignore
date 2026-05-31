@@ -6,6 +6,7 @@ obj/
 .vs/
 TestResults/
 coverage/
+**/App_Data/DataProtection-Keys/
 
 # Node
 node_modules/

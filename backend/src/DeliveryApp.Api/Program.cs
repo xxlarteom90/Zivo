@@ -4,6 +4,7 @@ using DeliveryApp.Api.Security;
 using DeliveryApp.Application;
 using DeliveryApp.Application.Interfaces;
 using DeliveryApp.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +18,13 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddSwaggerDocumentation();
+
+var dataProtectionKeysDirectory = new DirectoryInfo(
+    Path.Combine(builder.Environment.ContentRootPath, "App_Data", "DataProtection-Keys"));
+dataProtectionKeysDirectory.Create();
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(dataProtectionKeysDirectory);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -48,8 +56,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
