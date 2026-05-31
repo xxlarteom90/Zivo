@@ -1,20 +1,28 @@
 import { Box, Card, Divider, FormControlLabel, List, ListItemButton, ListItemText, Radio, Stack, Switch, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { useTranslation } from '../features/i18n/useTranslation';
+import {
+  savePreferences,
+  selectAppearance,
+  selectReducedMotion,
+  type Appearance
+} from '../features/preferences/preferencesSlice';
 import { PageHeader } from '../shared/components/PageHeader';
-
-const APPEARANCE_STORAGE = 'driver.appearance';
-const REDUCED_MOTION_STORAGE = 'driver.reducedMotion';
-
-type Appearance = 'system' | 'light' | 'dark';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 export function AppearanceSettingsPage() {
   const { t } = useTranslation();
-  const [appearance, setAppearance] = useState<Appearance>(() => (localStorage.getItem(APPEARANCE_STORAGE) as Appearance) || 'system');
-  const [reducedMotion, setReducedMotion] = useState<boolean>(() => localStorage.getItem(REDUCED_MOTION_STORAGE) === '1');
+  const dispatch = useAppDispatch();
+  const appearance = useAppSelector(selectAppearance);
+  const reducedMotion = useAppSelector(selectReducedMotion);
 
-  useEffect(() => { localStorage.setItem(APPEARANCE_STORAGE, appearance); }, [appearance]);
-  useEffect(() => { localStorage.setItem(REDUCED_MOTION_STORAGE, reducedMotion ? '1' : '0'); }, [reducedMotion]);
+  const setAppearance = (value: Appearance) => {
+    if (value === appearance) return;
+    dispatch(savePreferences({ appearance: value }));
+  };
+
+  const setReducedMotion = (value: boolean) => {
+    dispatch(savePreferences({ reducedMotion: value }));
+  };
 
   const options: { value: Appearance; label: string }[] = [
     { value: 'system', label: t('appearance.system') },

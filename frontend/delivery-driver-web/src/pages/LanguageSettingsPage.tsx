@@ -1,8 +1,9 @@
 import { Box, Card, Divider, List, ListItemButton, ListItemText, Radio, Snackbar, Stack } from '@mui/material';
 import { useState } from 'react';
-import { selectLanguage, setLanguage } from '../features/i18n/i18nSlice';
+import { selectLanguage } from '../features/i18n/i18nSlice';
 import { LANGUAGES, type LanguageCode } from '../features/i18n/languages';
 import { useTranslation } from '../features/i18n/useTranslation';
+import { savePreferences } from '../features/preferences/preferencesSlice';
 import { PageHeader } from '../shared/components/PageHeader';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 
@@ -14,7 +15,7 @@ export function LanguageSettingsPage() {
 
   const handleSelect = (code: LanguageCode) => {
     if (code === current) return;
-    dispatch(setLanguage(code));
+    dispatch(savePreferences({ language: code }));
     setOpen(true);
   };
 

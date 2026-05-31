@@ -1,19 +1,20 @@
 import { Box, Card, Divider, List, ListItemButton, ListItemText, Radio, Stack } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { useTranslation } from '../features/i18n/useTranslation';
+import { savePreferences, selectNavigationApp, type NavApp } from '../features/preferences/preferencesSlice';
 import { PageHeader } from '../shared/components/PageHeader';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
-const OPTIONS = ['Waze', 'Google Maps', 'Apple Maps'] as const;
-type NavApp = (typeof OPTIONS)[number];
-const STORAGE = 'driver.navApp';
+const OPTIONS: NavApp[] = ['Waze', 'Google Maps', 'Apple Maps'];
 
 export function NavigationSettingsPage() {
   const { t } = useTranslation();
-  const [current, setCurrent] = useState<NavApp>(() => (localStorage.getItem(STORAGE) as NavApp) || 'Google Maps');
+  const dispatch = useAppDispatch();
+  const current = useAppSelector(selectNavigationApp);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE, current);
-  }, [current]);
+  const select = (value: NavApp) => {
+    if (value === current) return;
+    dispatch(savePreferences({ navigationApp: value }));
+  };
 
   return (
     <Stack spacing={3}>
@@ -22,7 +23,7 @@ export function NavigationSettingsPage() {
         <List disablePadding>
           {OPTIONS.map((opt, idx) => (
             <Box key={opt}>
-              <ListItemButton onClick={() => setCurrent(opt)} sx={{ py: 1.5 }}>
+              <ListItemButton onClick={() => select(opt)} sx={{ py: 1.5 }}>
                 <ListItemText primary={opt} />
                 <Radio checked={current === opt} color="success" />
               </ListItemButton>

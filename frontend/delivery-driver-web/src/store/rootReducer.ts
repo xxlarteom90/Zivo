@@ -4,13 +4,15 @@ import { dispatcherOrdersReducer } from '../features/dispatcher/dispatcherOrders
 import i18nReducer from '../features/i18n/i18nSlice';
 import ordersReducer from '../features/orders/ordersSlice';
 import performanceReducer from '../features/performance/performanceSlice';
+import preferencesReducer from '../features/preferences/preferencesSlice';
 
 export const rootReducer = combineReducers({
   auth: authReducer,
   orders: ordersReducer,
   performance: performanceReducer,
   i18n: i18nReducer,
-  dispatcherOrders: dispatcherOrdersReducer
+  dispatcherOrders: dispatcherOrdersReducer,
+  preferences: preferencesReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

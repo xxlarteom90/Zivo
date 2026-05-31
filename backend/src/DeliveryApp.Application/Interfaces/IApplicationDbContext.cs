@@ -16,6 +16,7 @@ public interface IApplicationDbContext
     DbSet<OrderItem> OrderItems { get; }
     DbSet<OrderAssignment> OrderAssignments { get; }
     DbSet<OrderStatusHistory> OrderStatusHistory { get; }
+    DbSet<UserPreferences> UserPreferences { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
