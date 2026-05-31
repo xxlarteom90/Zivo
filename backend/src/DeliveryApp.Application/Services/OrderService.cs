@@ -139,8 +139,9 @@ public sealed class OrderService : IOrderService
             assignment.CancelledAtUtc = now;
         }
 
-        order.StatusHistory.Add(new OrderStatusHistory
+        _dbContext.OrderStatusHistory.Add(new OrderStatusHistory
         {
+            OrderId = order.Id,
             FromStatus = fromStatus,
             ToStatus = OrderStatus.Cancelled,
             ChangedByUserId = _userContext.UserId,

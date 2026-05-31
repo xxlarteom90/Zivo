@@ -88,8 +88,9 @@ public sealed class DriverOrderService : IDriverOrderService
         var now = _dateTimeProvider.UtcNow;
         var fromStatus = order.Status;
         order.Status = OrderStatus.Accepted;
-        order.Assignments.Add(new OrderAssignment
+        _dbContext.OrderAssignments.Add(new OrderAssignment
         {
+            OrderId = order.Id,
             DriverId = driver.Id,
             AcceptedAtUtc = now,
             IsActive = true
@@ -203,8 +204,9 @@ public sealed class DriverOrderService : IDriverOrderService
 
     private void AddHistory(Order order, OrderStatus from, OrderStatus to, string reason, DateTime changedAtUtc)
     {
-        order.StatusHistory.Add(new OrderStatusHistory
+        _dbContext.OrderStatusHistory.Add(new OrderStatusHistory
         {
+            OrderId = order.Id,
             FromStatus = from,
             ToStatus = to,
             ChangedByUserId = _userContext.UserId,

@@ -1,0 +1,19 @@
+{
+  "name": "delivery-management-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend/delivery-driver-web"
+  ],
+  "scripts": {
+    "db:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-local-postgres.ps1",
+    "backend:restore": "dotnet restore backend/DeliveryApp.sln",
+    "backend:run": "dotnet run --no-restore --project backend/src/DeliveryApp.Api/DeliveryApp.Api.csproj",
+    "backend:test": "dotnet test backend/DeliveryApp.sln --no-restore",
+    "frontend:dev": "npm run dev --workspace delivery-driver-web",
+    "frontend:build": "npm run build --workspace delivery-driver-web",
+    "dev": "npm run frontend:dev",
+    "build": "npm run frontend:build",
+    "test": "npm run backend:test"
+  }
+}
